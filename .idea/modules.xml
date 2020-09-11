@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gmall0421-logger/gmall0421-logger.iml" filepath="$PROJECT_DIR$/gmall0421-logger/gmall0421-logger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gmall0421-realtime/gmall0421-realtime.iml" filepath="$PROJECT_DIR$/gmall0421-realtime/gmall0421-realtime.iml" />
+    </modules>
+  </component>
+</project>
