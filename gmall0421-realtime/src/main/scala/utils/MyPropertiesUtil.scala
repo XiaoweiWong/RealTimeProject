@@ -3,6 +3,7 @@ import java.io.InputStreamReader
 import java.util.Properties
 
 /**
+ * 读配置文件工具类
  * @author david 
  * @create 2020-09-12 上午 10:59 
  */
@@ -12,6 +13,11 @@ object MyPropertiesUtil {
     println(properties.getProperty("kafka.broker.list"))
   }
 
+  /**
+   * 读配置文件方法
+   * @param propertieName
+   * @return 返回配置对象
+   */
   def load(propertieName:String):Properties={
     val prop: Properties = new Properties()
     prop.load(new InputStreamReader(Thread.currentThread()

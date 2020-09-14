@@ -1,8 +1,9 @@
 package utils
 import java.util
+
 import io.searchbox.client.config.HttpClientConfig
 import io.searchbox.client.{JestClient, JestClientFactory}
-import io.searchbox.core.{DocumentResult, Get, Index, Search, SearchResult}
+import io.searchbox.core.{Bulk, BulkResult, DocumentResult, Get, Index, Search, SearchResult}
 
 /**
  * @author david 
@@ -147,6 +148,35 @@ object MyESUtil {
     //getIndex1()
       getIndex2()
   }
+
+  /**
+   * 对ES批量插入数据
+   * @param dauList
+   * @param indexName
+   */
+  def bulkInsert(dauList:List[Any],indexName:String): Unit ={
+    if(dauList != null && dauList.size != 0){
+      //获取客户端的连接
+      var jestClient = getClient()
+      val builder: Bulk.Builder = new Bulk.Builder
+      for(dau <- dauList){
+        //把样例类对象插入index中，指定插入索引的名和文档类型，因为是批量插入，不指定文档id
+        val index: Index = new Index.Builder(dau).index(indexName).`type`("_doc").build()
+        builder.addAction(index)
+      }
+      //构建批量操作对象
+      val bulk: Bulk = builder.build()
+      //执行批量操作，返回批量操作结果对象
+      val result: BulkResult = jestClient.execute(bulk)
+
+      val items: util.List[BulkResult#BulkResultItem] = result.getItems
+                                                                        //从结果对象中获取插入元素，返回插入元素集合
+      println("向ES里面插入" + items.size() + "条数据")
+
+      jestClient.close()
+    }
+  }
+
 }
 
 case class Movie(
