@@ -9,7 +9,7 @@ import redis.clients.jedis.{Jedis, JedisPool, JedisPoolConfig}
 
   object MyRedisUtil {
     var jedisPool:JedisPool=null
-   // val jedisclieny:JedisPool=_
+
     /**
      * 获取jedis客户端方法
      * @return

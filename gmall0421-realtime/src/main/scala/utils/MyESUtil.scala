@@ -154,14 +154,18 @@ object MyESUtil {
    * @param dauList
    * @param indexName
    */
-  def bulkInsert(dauList:List[Any],indexName:String): Unit ={
+  def bulkInsert(dauList:List[(String,Any)],indexName:String): Unit ={
     if(dauList != null && dauList.size != 0){
       //获取客户端的连接
       var jestClient = getClient()
       val builder: Bulk.Builder = new Bulk.Builder
-      for(dau <- dauList){
-        //把样例类对象插入index中，指定插入索引的名和文档类型，因为是批量插入，不指定文档id
-        val index: Index = new Index.Builder(dau).index(indexName).`type`("_doc").build()
+      for((id,dau) <- dauList){
+        //把样例类对象插入index中，指定插入索引的名和文档类型，指定文档id保证不数据重复
+        val index: Index = new Index.Builder(dau)
+          .index(indexName)
+          .`type`("_doc")
+          .id(id)
+          .build()
         builder.addAction(index)
       }
       //构建批量操作对象
