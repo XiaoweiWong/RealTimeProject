@@ -1,7 +1,6 @@
 package utils
 
 import java.util
-
 import org.apache.kafka.common.TopicPartition
 import org.apache.spark.streaming.kafka010.OffsetRange
 import redis.clients.jedis.Jedis
@@ -12,10 +11,8 @@ import redis.clients.jedis.Jedis
  * @create 2020-09-14 上午 11:39 
  */
 object OffsetManagerUtil {
-
-  //TODO 从redis中读取偏移量
   /**
-   *
+   *从redis中读取偏移量
    * @param topicName
    * @param groupId
    * @return
@@ -41,17 +38,18 @@ object OffsetManagerUtil {
     client.close()
     import scala.collection.JavaConverters._
 
-    val kafkaOffsetMap: Map[TopicPartition, Long] = offsetMap.asScala.map { //有case的时候（）必须要改为大括号
+    val kafkaOffsetMap: Map[TopicPartition, Long] = offsetMap.asScala.map {
+                //有case的时候，传递单一参数，map（）必须要改为大括号，如果当前函数的有两个及以上参数，必须是小括号
       case (partitionId, offset) => {
         println("读取分区偏移量：" + partitionId + ":" + offset)
         //将Redis中保存的分区对应的偏移量进行封装
-        (new TopicPartition(topicName, groupId.toInt), offset.toLong)
+        (new TopicPartition(topicName, partitionId.toInt), offset.toLong)
       }
-    }.toMap
+    }.toMap  //将可变的Map集合转换为不可变
     kafkaOffsetMap
   }
 
-  //TODO
+
 /**
  * 向Redis中保存偏移量
  * Reids格式：type=>Hash  [key=>offset:topic:groupId field=>partitionId value=>偏移量值] expire 不需要指定
@@ -68,7 +66,7 @@ object OffsetManagerUtil {
       //封装到map集合
       offsetMap.put(partition.toString,untilOffset.toString)
 
-      println("保存分区:" + partition +":" + offset.fromOffset+"--->" + offset.untilOffset)
+      println("保存分区:" + partition +"偏移量的起始到终止:" + offset.fromOffset+"--->" + offset.untilOffset)
     }
     //拼接Reids中存储偏移量的key
     val offsetKey :String = "offset:"+topicName+":"+groupId
@@ -80,7 +78,6 @@ object OffsetManagerUtil {
 
       jedis.close()
     }
-
   }
 
 }

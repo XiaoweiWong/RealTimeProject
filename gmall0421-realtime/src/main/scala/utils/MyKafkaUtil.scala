@@ -32,15 +32,18 @@ object MyKafkaUtil {
 
 
   /**
-   * 创建DStream，返回接收到的输入数据
+   * kafka配置数据，封装成DStream，返回接收到的输入数据
    * @param topic
    * @param ssc
    * @return
    */
   def getKafkaStream(topic: String,ssc:StreamingContext ): InputDStream[ConsumerRecord[String,String]]={
     val dStream = KafkaUtils.createDirectStream[String,String](
+      //上下文变量
       ssc,
+      //位置策略
       LocationStrategies.PreferConsistent,
+      //消费策略
       ConsumerStrategies.Subscribe[String,String](Array(topic), kafkaParam )
     )
     dStream
@@ -54,10 +57,14 @@ object MyKafkaUtil {
    * @return
    */
   def getKafkaStream(topic: String,ssc:StreamingContext,groupId:String): InputDStream[ConsumerRecord[String,String]]={
+   //指定groupId
     kafkaParam("group.id")=groupId
     val dStream = KafkaUtils.createDirectStream[String,String](
+      //上下文变量
       ssc,
+      //位置策略
       LocationStrategies.PreferConsistent,
+      //消费策略
       ConsumerStrategies.Subscribe[String,String](Array(topic),kafkaParam ))
     dStream
   }
@@ -72,11 +79,15 @@ object MyKafkaUtil {
    */
   def getKafkaStream(topic: String,ssc:StreamingContext,offsets:Map[TopicPartition,Long],groupId:String)
   : InputDStream[ConsumerRecord[String,String]]={
+    //指定groupId
     kafkaParam("group.id")=groupId
+
     val dStream = KafkaUtils.createDirectStream[String,String](
-      ssc,
-      LocationStrategies.PreferConsistent,
+      ssc,//上下文变量
+      LocationStrategies.PreferConsistent,//位置策略
+      //消费策略，[String,String]是kafka数据K,V类型，
       ConsumerStrategies.Subscribe[String,String](Array(topic),kafkaParam,offsets))
+
     dStream
   }
 
